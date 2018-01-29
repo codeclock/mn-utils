@@ -5,10 +5,10 @@
 set -o history
 
 #in the following replace: 
-#OSUSER, USER_NAME_OF_YOUR_CHOICE, PASSWORD_OF_YOUR_CHOICE,
+#OS_USER, USER_NAME_OF_YOUR_CHOICE, PASSWORD_OF_YOUR_CHOICE,
 #YOUR_MASTERNODER_PRIVATE_KEY, IP_OF_YOUR_VPS
 #with your values
-NEWUSER=OSUSER
+NEWUSER=OS_USER
 RPCUSER=USER_NAME_OF_YOUR_CHOICE
 RPCPW=PASSWORD_OF_YOUR_CHOICE
 MNPRIKEY=YOUR_MASTERNODER_PRIVATE_KEY
@@ -54,7 +54,14 @@ sudo -i -u $NEWUSER ./suppo-cli mnsync status | grep "MASTERNODE_SYNC_FINISHED" 
 check_sync
 while [ $? != 0 ]; do check_sync; done
 
-sudo -i -u $NEWUSER bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab'
+add_cronjob(){
+sudo -i -u suppod bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab'
+}
+typeset -fx add_cronjob
+
+sudo -i -u suppod crontab -l | grep -q '.suppocore/sentinel' && echo "Not adding cronjob again" || add_cronjob
+
+
 
 
 set +o history
