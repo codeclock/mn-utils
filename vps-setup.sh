@@ -55,11 +55,11 @@ check_sync
 while [ $? != 0 ]; do check_sync; done
 
 add_cronjob(){
-sudo -i -u suppod bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab'
+sudo -i -u $NEWUSER bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab'
 }
 typeset -fx add_cronjob
 
-sudo -i -u suppod crontab -l | grep -q '.suppocore/sentinel' && echo "Not adding cronjob again" || add_cronjob
+sudo -i -u $NEWUSER crontab -l | grep -q '.suppocore/sentinel' && echo "Not adding cronjob again" || add_cronjob
 
 
 
