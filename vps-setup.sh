@@ -5,17 +5,17 @@
 set -o history
 
 #in the following replace: 
-#OS_USER, USER_NAME_OF_YOUR_CHOICE, PASSWORD_OF_YOUR_CHOICE,
+#OS_USER_NAME_OF_YOUR_CHOICE, RPC_USER_NAME_OF_YOUR_CHOICE, PASSWORD_OF_YOUR_CHOICE,
 #YOUR_MASTERNODER_PRIVATE_KEY, IP_OF_YOUR_VPS
 #with your values
-NEWUSER=OS_USER
-RPCUSER=USER_NAME_OF_YOUR_CHOICE
+NEWUSER=OS_USER_NAME_OF_YOUR_CHOICE
+RPCUSER=RPC_USER_NAME_OF_YOUR_CHOICE
 RPCPW=PASSWORD_OF_YOUR_CHOICE
 MNPRIKEY=YOUR_MASTERNODER_PRIVATE_KEY
 VPSIP=IP_OF_YOUR_VPS
 #don't edit anything beyond this point
 
-if [[ "$NEWUSER" = "OS_USER" ]] || [[ "$RPCUSER" = "USER_NAME_OF_YOUR_CHOICE" ]]\
+if [[ "$NEWUSER" = "OS_USER_NAME_OF_YOUR_CHOICE" ]] || [[ "$RPCUSER" = "RPC_USER_NAME_OF_YOUR_CHOICE" ]]\
  || [[ "$RPCPW" = "PASSWORD_OF_YOUR_CHOICE" ]] ; then echo "Please UPDATE the variables, before running the script!"; exit 1; fi
 
 
@@ -26,6 +26,8 @@ apt-get update -y
 apt-get upgrade -y
 apt-get install sudo git python-virtualenv -y
 
+chmod +x suppo*
+chown $NEWUSER suppo*
 mv suppo* /home/$NEWUSER
 sudo -i -u $NEWUSER /home/$NEWUSER/suppod --daemon
 
@@ -69,12 +71,13 @@ check_sync
 while [ $? != 0 ]; do check_sync; done
 
 add_cronjob(){
-sudo -i -u $NEWUSER bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab'
+sudo -i -u $NEWUSER bash -c '( crontab -l ; echo "* * * * * cd /home/$USER/.suppocore/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab' &>/dev/null
 }
 typeset -fx add_cronjob
 
-sudo -i -u $NEWUSER crontab -l | grep -q '.suppocore/sentinel' && echo "Not adding cronjob again" || add_cronjob
+sudo -i -u $NEWUSER crontab -l | grep -q '.suppocore/sentinel' && echo "Not adding cronjob again" || add_cronjob &>/dev/null
 
+echo -e "Setup script completed."
 
 
 
