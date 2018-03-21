@@ -11,13 +11,27 @@ COIN="suppo"
 UPDATE_URL="https://api.github.com/repos/codeclock/sc/releases/latest"
 
 apt-get install sudo unzip -y
-
+echo -e "Getting version information"
 ZIPNAME=`curl -s $UPDATE_URL | grep name |grep linux64 | cut -d '"' -f 4`
-VERNAME=${ZIPAME::-12}
+VERNAME=${ZIPNAME::-12}
 
-curl -s $UPDATE_URL | grep browser_download_url |grep linux64 | cut -d '"' -f 4 | wget -qi -
+echo -e "Downloading: "$VERNAME
+
+curl -s $UPDATE_URL | grep browser_download_url |grep linux64 | cut -d '"' -f 4 | wget --show-progress -qi -
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo "Download failed, quitting"
+    exit(ERROR_CODE)
+fi
 #extract the two required files
+echo -e "Extracting required files"
 unzip ZIPNAME $VERNAME/${COIN}d $VERNAME/${COIN}-cli 
+ERROR_CODE=$?
+
+if [ $ERROR_CODE -ne 0 ]; then
+    echo "Couldn't extract files, quitting"
+    exit(ERROR_CODE)
+fi
 
 PIDS=(`pidof ${COIN}d`)
 
@@ -39,5 +53,7 @@ do
 done
 
 rm -rdf $VERNAME/
+
+echo -e "."
 
 set +o history
