@@ -25,7 +25,7 @@ if [ $ERROR_CODE -ne 0 ]; then
 fi
 #extract the two required files
 echo -e "Extracting required files"
-unzip ZIPNAME $VERNAME/${COIN}d $VERNAME/${COIN}-cli 
+unzip $ZIPNAME $VERNAME/${COIN}d $VERNAME/${COIN}-cli 
 ERROR_CODE=$?
 
 if [ $ERROR_CODE -ne 0 ]; then
