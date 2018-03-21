@@ -10,14 +10,16 @@ COIN="suppo"
 #COIND="suppod"
 UPDATE_URL="https://api.github.com/repos/codeclock/sc/releases/latest"
 
+echo -e "Installing unzip if it is missing (this may take some time)"
 apt-get install sudo unzip -y
 echo -e "Getting version information"
-ZIPNAME=`curl -s $UPDATE_URL | grep name |grep linux64 | cut -d '"' -f 4`
+MACHINE_TYPE="linux"`getconf LONG_BIT`
+ZIPNAME=`curl -s $UPDATE_URL | grep name |grep $MACHINE_TYPE | cut -d '"' -f 4`
 VERNAME=${ZIPNAME::-12}
 
 echo -e "Downloading: "$VERNAME
 
-curl -s $UPDATE_URL | grep browser_download_url |grep linux64 | cut -d '"' -f 4 | wget --show-progress -qi -
+curl -s $UPDATE_URL | grep browser_download_url |grep $MACHINE_TYPE | cut -d '"' -f 4 | wget --show-progress -qi -
 ERROR_CODE=$?
 if [ $ERROR_CODE -ne 0 ]; then
     echo "Download failed, quitting"
@@ -38,14 +40,13 @@ PIDS=(`pidof ${COIN}d`)
 for PID in "${PIDS[@]}"
 do
     POWNER=`ps -o user= -p $PID`
-    echo $POWNER
     LOC=`readlink /proc/$PID/exe`
     LOC=${LOC::-6}
-    echo $LOC
 
-    #echo -e "updating files"
+    echo -e "Updating files and restarting, allow about 2 mins"
 
     sudo -i -u $POWNER $LOC/${COIN}-cli stop
+    sleep 30
     cp $VERNAME/${COIN}* $LOC/
     sleep 30
     sudo -i -u $POWNER $LOC/${COIN}d
