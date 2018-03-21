@@ -21,7 +21,7 @@ curl -s $UPDATE_URL | grep browser_download_url |grep linux64 | cut -d '"' -f 4 
 ERROR_CODE=$?
 if [ $ERROR_CODE -ne 0 ]; then
     echo "Download failed, quitting"
-    exit(ERROR_CODE)
+    exit $ERROR_CODE 
 fi
 #extract the two required files
 echo -e "Extracting required files"
@@ -30,7 +30,7 @@ ERROR_CODE=$?
 
 if [ $ERROR_CODE -ne 0 ]; then
     echo "Couldn't extract files, quitting"
-    exit(ERROR_CODE)
+    exit $ERROR_CODE
 fi
 
 PIDS=(`pidof ${COIN}d`)
