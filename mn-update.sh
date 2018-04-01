@@ -10,8 +10,8 @@ COIN="suppo"
 #COIND="suppod"
 UPDATE_URL="https://api.github.com/repos/codeclock/sc/releases/latest"
 
-echo -e "Installing unzip if it is missing (this may take some time)"
-apt-get install sudo unzip -y
+echo -e "Installing unzip and curl if they are missing (this may take some time)"
+apt-get install sudo unzip curl -y
 echo -e "Getting version information"
 MACHINE_TYPE="linux"`getconf LONG_BIT`
 ZIPNAME=`curl -s $UPDATE_URL | grep name |grep $MACHINE_TYPE | cut -d '"' -f 4`
