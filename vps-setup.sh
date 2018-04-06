@@ -18,7 +18,10 @@ VPSIP=IP_OF_YOUR_VPS
 if [[ "$NEWUSER" = "OS_USER_NAME_OF_YOUR_CHOICE" ]] || [[ "$RPCUSER" = "RPC_USER_NAME_OF_YOUR_CHOICE" ]]\
  || [[ "$RPCPW" = "PASSWORD_OF_YOUR_CHOICE" ]] ; then echo "Please UPDATE the variables, before running the script!"; exit 1; fi
 
-
+if [ ! -f suppod ]; then
+    echo "File not found! Please make sure to upload suppod and suppo-cli to the same directory as ${0##*/}"
+    exit 1
+fi
 
 
 useradd -m $NEWUSER
